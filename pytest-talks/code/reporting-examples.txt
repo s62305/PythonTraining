@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "code/unittest-example.py", line 11, in test_split
+    self.assertEqual(s.split(), ['hello'])
+AssertionError: Lists differ: ['hello', 'world'] != ['hello']
+
+First list contains 1 additional elements.
+First extra element 1:
+world
+
+- ['hello', 'world']
++ ['hello']
+
+
+
+_____________________________________ test_split ______________________________________
+
+    def test_split():
+        s = 'hello world'
+>       assert s.split() == ['hello']
+E       assert ['hello', 'world'] == ['hello']
+E         Left contains more items, first extra item: 'world'
+E         Use -v to get the full diff
+
+

@@ -1,0 +1,166 @@
+\documentclass{beamer}
+\usepackage[russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+% \usepackage{lmodern}
+\usepackage{minted}
+% \usemintedstyle{colorful}
+\usetheme{Warsaw}
+\hypersetup{colorlinks=true,urlcolor=blue}
+
+\newmintedfile[pyfile]{python}{
+fontfamily=tt,
+fontsize=\small,
+linenos=true,
+breaklines=true,
+numberblanklines=true,
+numbersep=12pt,
+numbersep=5pt,
+gobble=0,
+frame=leftline,
+framerule=0.4pt,
+framesep=2mm,
+funcnamehighlighting=true,
+tabsize=4,
+obeytabs=false,
+mathescape=false
+samepage=false, %with this setting you can force the list to appear on the same page
+showspaces=false,
+showtabs =false,
+texcl=false,
+}
+\newminted[pycode]{python}{
+fontfamily=tt,
+linenos=true,
+breaklines=true,
+numberblanklines=true,
+numbersep=12pt,
+numbersep=5pt,
+autogobble=true,
+frame=leftline,
+framerule=0.4pt,
+framesep=2mm,
+funcnamehighlighting=true,
+tabsize=4,
+obeytabs=false,
+mathescape=false
+samepage=false, %with this setting you can force the list to appear on the same page
+showspaces=false,
+showtabs =false,
+texcl=false,
+}
+
+\title{pytest framework~--- intro \& overview}
+\author{Литус Ярослав~-- группа тестирования поиска}
+\institute{ООО <<ПП~Спутник>>}
+
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+    \tableofcontents
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{Unittest code example}
+    \pyfile{./code/unittest-example.py}
+\end{frame}
+
+\begin{frame}[fragile]{Same thing done with pytest}
+    \pyfile{./code/pytest-example.py}
+\end{frame}
+
+\begin{frame}[fragile]{Assertions and Error reporting}
+    \only<1-2>{
+        Unittest:
+        \inputminted[frame=lines,linenos,fontsize=\tiny,lastline=11]{bash}{./code/reporting-examples.txt}
+        \pause
+        Pytest:
+        \inputminted[frame=lines,linenos,fontsize=\tiny,firstline=15]{bash}{./code/reporting-examples.txt}
+    }
+    \begin{itemize}
+    \item<3->{Похоже, не правда ли?}
+    \item<4->{Но как это достигается?}
+    \item<5->{Unittest использует специальные assert-методы класса TestCase.}
+    \item<6->{Pytest переопределяет assert-выражения при подгрузке (import) модуля.}
+    \uncover<7->{
+    \begin{quote}
+        pytest has support for showing the values of the most common subexpressions including calls,
+        attributes, comparisons, and binary and unary operators.
+        (See \href{http://pytest.org/latest/example/reportingdemo.html\#tbreportdemo}{Demo of Python failure reports with pytest}).
+        This allows you to use the idiomatic python constructs
+        without boilerplate code while not losing introspection information.
+    \end{quote}
+    }
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Assert-методы в unittest}
+    Самые распространенные assert-методы класса TestCase:
+    \begin{pycode}
+        assertEqual(a, b)
+        assertNotEqual(a, b)
+        assertTrue(x)
+        assertFalse(x)
+        assertIs(a, b)
+        assertIsNot(a, b)
+        assertIsNone(x)
+        assertIsNotNone(x)
+        assertIn(a, b)
+        assertNotIn(a, b)
+        assertIsInstance(a, b)
+        assertNotIsInstance(a, b)
+    \end{pycode}
+\end{frame}
+
+\begin{frame}[fragile]{Test parametrization}
+    \begin{itemize}
+    \item Рассмотрим ситуацию когда требуется выполнить один и тот же сценарий с разными данными.
+    \pause \item К примеру протестировать строковый метод isuuper() на разных строках.
+    \pause \item Unittest не предоставляет иструмента для параметризации тестов,~--- для каждый кейс придется описывать вручную, что приведет к множественному дублированию кода и существенно затруднит его поддержку.
+    \pause \item Что же скажет pytest?
+    \pause \item Удобная параметризация из коробки!
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Test parametrization --- example}
+    \pyfile{./code/pytest-parametrize.py}
+\end{frame}
+
+\begin{frame}[fragile]{Немного о фикстурах}
+    \begin{itemize}
+    \item Одним из самых удачных решений фреймворка pytest стали фикстуры (fixtures).
+    \pause \item In software testing, a test fixture is a fixed state of the software
+    under test used as a baseline for running tests; also known as the test context.
+    \pause \item В xUnit фиксуры реализуются через описание действий, относящихся к setUp и к tearDown.
+    Например в unittest необходимо переопределить методы setUp() и к tearDown() класса TestCase.
+    \pause \item Pytest вводит понятие функции-фикстуры, которая передается в тест в виде funcarg-а.
+    \pause \item ЧЕГО???
+    \pause \item О фикстурах стоит поговоить отдельно и поподробнее\ldots
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Extensions/plugins}
+    \begin{itemize}
+    \item pytest является во многих смыслах гибким фреймворком.
+    \pause \item Подробная документация и богатое API дают возможность достаточно просто писать плагины.
+    \pause \item В сообществе уже существует обширный набор: около 200 плагинов
+    \pause \item Установка~--- как для обычного пакета: \mint{bash}|pip install pytest-*|
+    \pause \item Как подойти к написанию плагина?
+    \pause \item Все что потребуется~--- изучить \href{http://pytest.org/latest/writing_plugins.html\#pytest-hook-reference}{спецификации предоставляемых хуков}!
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{pytest hooks}
+    \only<1>{\inputminted[fontsize=\footnotesize,lastline=17]{python}{./code/pytest-hooks.py}}
+    \only<2>{\inputminted[fontsize=\footnotesize,firstline=19]{python}{./code/pytest-hooks.py}}
+\end{frame}
+
+\end{document}
