@@ -10,7 +10,7 @@
 \usecolortheme{whale}
 \definecolor{links}{HTML}{2A1B81}
 \hypersetup{urlcolor=links}
-\hypersetup{colorlinks=true,urlcolor=links}
+\hypersetup{colorlinks=true,urlcolor=links,linkcolor=links}
 
 \newmintedfile[pyfile]{python}{
 fontfamily=tt,
@@ -55,10 +55,11 @@ tabsize=2,
     \titlepage
 \end{frame}
 
-% \begin{frame}{Outline}
-%     \tableofcontents
-% \end{frame}
+\begin{frame}{План}
+    \tableofcontents
+\end{frame}
 
+\section{unittest vs. pytest}
 \begin{frame}[fragile]{Unittest code example}
     \pyfile{./code/unittest-example.py}
 \end{frame}
@@ -67,6 +68,7 @@ tabsize=2,
     \pyfile{./code/pytest-example.py}
 \end{frame}
 
+\section{assert-выражения и отчет об ошибках}
 \begin{frame}[fragile]{Assertions and Error reporting}
     \only<1-2>{
         Unittest:
@@ -110,11 +112,12 @@ tabsize=2,
     \end{pycode}
 \end{frame}
 
+\section{Параметризация}
 \begin{frame}[fragile]{Test parametrization}
     \begin{itemize}
     \item Рассмотрим ситуацию когда требуется выполнить один и тот же сценарий с разными данными.
-    \pause \item К примеру протестировать строковый метод \verb|isupper()| на разных строках.
-    \pause \item Unittest не предоставляет иструмента для параметризации тестов,~--- для каждый кейс придется описывать вручную, что приведет к множественному дублированию кода и существенно затруднит его поддержку.
+    \pause \item К примеру требуется протестировать строковый метод \verb|isupper()| на разных строках.
+    \pause \item Unittest не предоставляет инструмента для параметризации тестов,~--- каждый кейс придется описывать вручную, что приведет к множественному дублированию кода и существенно затруднит его поддержку.
     \pause \item Что же скажет pytest?
     \pause \item Удобная параметризация из коробки!
     \end{itemize}
@@ -124,6 +127,7 @@ tabsize=2,
     \pyfile{./code/pytest-parametrize.py}
 \end{frame}
 
+\section{Выполнение тестов}
 \begin{frame}[fragile]{Markers \& test collection}
     \begin{itemize}
     \item Пример запуска тестов:
@@ -136,6 +140,7 @@ tabsize=2,
     \end{itemize}
 \end{frame}
 
+\section{Маркеры}
 \begin{frame}[fragile]{Markers \& test collection}
     \begin{itemize}
     \item Механизм маркеров дает удобный способ организации тестов и их выборочного запуска.
@@ -171,13 +176,13 @@ tabsize=2,
     \end{itemize}
 \end{frame}
 
-
+\section{Немного о фикстурах}
 \begin{frame}[fragile]{Немного о фикстурах}
     \begin{itemize}
     \item Одним из самых удачных решений фреймворка pytest стали фикстуры (fixtures).
     \pause \item In software testing, a test fixture is a fixed state of the software
     under test used as a baseline for running tests; also known as the test context.
-    \pause \item В xUnit фиксуры реализуются через описание действий, относящихся к setUp и к tearDown.
+    \pause \item В классических xUnit-фреймворках фиксуры реализуются через описание действий, относящихся к setUp и к tearDown.
     Например в unittest необходимо переопределить методы setUp() и к tearDown() класса TestCase.
     \pause \item Pytest вводит понятие функции-фикстуры, которая передается в тест в виде funcarg-а.
     \pause \item ЧЕГО???
@@ -185,6 +190,7 @@ tabsize=2,
     \end{itemize}
 \end{frame}
 
+\section{Плагины для pytest}
 \begin{frame}[fragile]{Extensions/plugins}
     \begin{itemize}
     \item pytest является во многих смыслах гибким фреймворком.
@@ -205,6 +211,7 @@ tabsize=2,
     \pyfile{./code/pytest-plugin-example.py}
 \end{frame}
 
+\section{Полезные ресурсы}
 \begin{frame}[fragile]{to be continued\ldots}
     Полезные ресурсы:
     \begin{itemize}
