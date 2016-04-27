@@ -3,11 +3,14 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{hyperref}
+\usepackage{verbatim}
 % \usepackage{lmodern}
 \usepackage{minted}
-% \usemintedstyle{colorful}
-\usetheme{Warsaw}
-\hypersetup{colorlinks=true,urlcolor=blue}
+\usetheme{Pittsburgh}
+\usecolortheme{whale}
+\definecolor{links}{HTML}{2A1B81}
+\hypersetup{urlcolor=links}
+\hypersetup{colorlinks=true,urlcolor=links}
 
 \newmintedfile[pyfile]{python}{
 fontfamily=tt,
@@ -32,23 +35,13 @@ texcl=false,
 }
 \newminted[pycode]{python}{
 fontfamily=tt,
-linenos=true,
+fontsize=\small,
 breaklines=true,
-numberblanklines=true,
-numbersep=12pt,
-numbersep=5pt,
 autogobble=true,
-frame=leftline,
+frame=lines,
 framerule=0.4pt,
-framesep=2mm,
 funcnamehighlighting=true,
-tabsize=4,
-obeytabs=false,
-mathescape=false
-samepage=false, %with this setting you can force the list to appear on the same page
-showspaces=false,
-showtabs =false,
-texcl=false,
+tabsize=2,
 }
 
 \title{pytest framework~--- intro \& overview}
@@ -62,12 +55,9 @@ texcl=false,
     \titlepage
 \end{frame}
 
-\begin{frame}{Outline}
-    \tableofcontents
-\end{frame}
-
-
-
+% \begin{frame}{Outline}
+%     \tableofcontents
+% \end{frame}
 
 \begin{frame}[fragile]{Unittest code example}
     \pyfile{./code/unittest-example.py}
@@ -123,7 +113,7 @@ texcl=false,
 \begin{frame}[fragile]{Test parametrization}
     \begin{itemize}
     \item Рассмотрим ситуацию когда требуется выполнить один и тот же сценарий с разными данными.
-    \pause \item К примеру протестировать строковый метод isuuper() на разных строках.
+    \pause \item К примеру протестировать строковый метод \verb|isupper()| на разных строках.
     \pause \item Unittest не предоставляет иструмента для параметризации тестов,~--- для каждый кейс придется описывать вручную, что приведет к множественному дублированию кода и существенно затруднит его поддержку.
     \pause \item Что же скажет pytest?
     \pause \item Удобная параметризация из коробки!
@@ -133,6 +123,54 @@ texcl=false,
 \begin{frame}[fragile]{Test parametrization --- example}
     \pyfile{./code/pytest-parametrize.py}
 \end{frame}
+
+\begin{frame}[fragile]{Markers \& test collection}
+    \begin{itemize}
+    \item Пример запуска тестов:
+        \mint{bash}|py.test dir_1 ../tests dir_2/test_this.py|
+    \pause \item If no arguments are specified then collection starts from testpaths (if configured) or the current directory. Alternatively, command line arguments can be used in any combination of directories, file names or node ids;
+    \pause \item recurse into directories, unless they match \emph{norecursedirs};
+    \pause \item \verb|test_*.py| or \verb|*_test.py| files, imported by their test package name;
+    \pause \item Test prefixed test classes (without an \verb|__init__| method);
+    \pause \item \verb|test_| prefixed test functions or methods are test items.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Markers \& test collection}
+    \begin{itemize}
+    \item Механизм маркеров дает удобный способ организации тестов и их выборочного запуска.
+    \pause \item Как пометить тест(ы) маркером?
+    \pause \item 
+        \begin{minted}[fontsize=\footnotesize]{python}
+        @pytest.mark.smoke
+        def test_do_this_and_that():
+            # ...
+
+        @pytest.mark.smoke
+        @pytest.mark.slow
+        def test_do_smth_very_slow():
+            # ...
+        \end{minted}
+    \pause \item Помечая тесты таким образом, мы получаем способ гибко формировать комплекты для запуска:
+        \mint[fontsize=\footnotesize]{bash}|py.test tests/ -m smoke|
+        \mint[fontsize=\footnotesize]{bash}|py.test tests/ -m "smoke and not slow"|
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Markers \& test collection}
+    \begin{itemize}
+    \item Есть несколько полезных встроенных маркеров.
+    \pause \item \mint{bash}|py.test --markers|
+    \pause \item \mint{python}|@pytest.mark.skipif(condition)|
+        Example: \verb|skipif('sys.platform == "win32"')| skips the test if we are on the win32 platform.
+        % see \url{http://pytest.org/latest/skipping.html}
+    \pause \item \mint{python}|@pytest.mark.xfail(condition, reason, run, raises)|
+        See \url{http://pytest.org/latest/skipping.html}
+    \pause \item \mint{python}|@pytest.mark.parametrize(argnames, argvalues)|
+        Example: \verb|@parametrize('arg1', [1,2])| would lead to two calls of the decorated test function, one with arg1=1 and another with arg1=2
+    \end{itemize}
+\end{frame}
+
 
 \begin{frame}[fragile]{Немного о фикстурах}
     \begin{itemize}
@@ -153,7 +191,7 @@ texcl=false,
     \pause \item Подробная документация и богатое API дают возможность достаточно просто писать плагины.
     \pause \item В сообществе уже существует обширный набор: около 200 плагинов
     \pause \item Установка~--- как для обычного пакета: \mint{bash}|pip install pytest-*|
-    \pause \item Как подойти к написанию плагина?
+    \pause \item Как подойти к написанию своего плагина?
     \pause \item Все что потребуется~--- изучить \href{http://pytest.org/latest/writing_plugins.html\#pytest-hook-reference}{спецификации предоставляемых хуков}!
     \end{itemize}
 \end{frame}
@@ -161,6 +199,24 @@ texcl=false,
 \begin{frame}[fragile]{pytest hooks}
     \only<1>{\inputminted[fontsize=\footnotesize,lastline=17]{python}{./code/pytest-hooks.py}}
     \only<2>{\inputminted[fontsize=\footnotesize,firstline=19]{python}{./code/pytest-hooks.py}}
+\end{frame}
+
+\begin{frame}[fragile]{Plugins are easy!}
+    \pyfile{./code/pytest-plugin-example.py}
+\end{frame}
+
+\begin{frame}[fragile]{to be continued\ldots}
+    Полезные ресурсы:
+    \begin{itemize}
+    \item Документация и примеры (Ваш ресурс номер 1): \url{http://pytest.org}.
+    Там же коллекция ссылок на доклады и блоги: \url{http://pytest.org/latest/talks.html}
+    \item Список плагинов: \url{http://plugincompat.herokuapp.com}
+    \item Вопросы-ответы на stackoverflow: \url{http://stackoverflow.com/search?q=pytest}
+    \item Интересная перезентация на русском: \url{http://www.slideshare.net/imankulov/pytest-testing}
+    \item Интересная перезентация на ангийском: \url{http://www.the-compiler.org/tmp/sps16.html}
+    \item Создатель фреймворка: \url{https://holgerkrekel.net/}
+    \end{itemize}
+    \footnotesize\emph{При создании данной презентации были использованы материалы некоторых из перечисленных ресурсов}
 \end{frame}
 
 \end{document}
