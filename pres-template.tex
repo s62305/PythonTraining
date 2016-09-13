@@ -1,0 +1,133 @@
+\documentclass{beamer}
+\usepackage[russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{verbatim}
+\usepackage{minted}
+\usetheme{Pittsburgh}
+\usecolortheme{whale}
+\definecolor{links}{HTML}{2A1B81}
+\hypersetup{urlcolor=links}
+\hypersetup{colorlinks=true,urlcolor=links,linkcolor=links}
+
+\newmintedfile[pyfile]{python}{
+    fontfamily=tt,
+    fontsize=\small,
+    linenos=true,
+    breaklines=true,
+    numberblanklines=true,
+    numbersep=12pt,
+    numbersep=5pt,
+    gobble=0,
+    frame=leftline,
+    framerule=0.4pt,
+    framesep=2mm,
+    funcnamehighlighting=true,
+    tabsize=4,
+    obeytabs=false,
+    mathescape=false
+    samepage=false,
+    showspaces=false,
+    showtabs =false,
+    texcl=false,
+}
+\newminted[pycode]{python}{
+    fontfamily=tt,
+    fontsize=\small,
+    breaklines=true,
+    linenos=true,
+    autogobble=true,
+    frame=lines,
+    framerule=0.4pt,
+    funcnamehighlighting=true,
+    tabsize=2,
+}
+
+
+
+\title{TITLE}
+\author{Литус Ярослав / Yaroslav Litus}
+\institute{Группа тестирования поиска / search testing group \newline Поисковый Портал Спутник / \href{http://sputnik.ru}{sputnik.ru}}
+\date{}
+
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Contents}
+    \tableofcontents
+\end{frame}
+
+\section{section}
+\begin{frame}[fragile]{frame}
+    \begin{itemize}
+        \item You can include python-code directly or from a file.
+        \item This example uses \verb|pygments| to colorize the source code.
+        \item So keep in mind that the commadline argument \verb|-shell-escape| is required to compile this tex-file.
+        \item E.g.: \verb|$ pdflatex -shell-escape pres-template.tex|
+        \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{frame}
+    \begin{pycode}
+        import antigravity
+        print("Yaaaay!")
+
+        def fib(n):
+            if n < 0:
+                raise ValueError("Must be non-negative")
+            elif n == 0 or n == 1:
+                return 1
+            else:
+                return fact(n-2) + fact(n-1)
+
+        print(tuple(fib(i) for i in range(10)))
+        assert fib(5) == 8
+    \end{pycode}
+\end{frame}
+
+\section{section}
+\begin{frame}[fragile]{frame}
+    \begin{itemize}
+    \item item
+    \pause \item айтем
+    \pause \item Test prefixed test classes (without an \verb|__init__| method);
+    \end{itemize}
+\end{frame}
+
+
+\section{section}
+\begin{frame}[fragile]{frame}
+    \begin{itemize}
+    \pause \item 
+        \begin{minted}[fontsize=\footnotesize]{python}
+        @pytest.mark.smoke
+        def test_do_this_and_that():
+            # ...
+
+        @pytest.mark.smoke
+        @pytest.mark.slow
+        def test_do_smth_very_slow():
+            # ...
+        \end{minted}
+    \pause \item Помечая тесты таким образом, мы получаем способ гибко формировать комплекты для запуска:
+        \mint[fontsize=\footnotesize]{bash}|py.test tests/ -m smoke|
+        \mint[fontsize=\footnotesize]{bash}|py.test tests/ -m "smoke and not slow"|
+    \end{itemize}
+\end{frame}
+
+\section{Useful resources}
+\begin{frame}[fragile]{to be continued\ldots}
+    Полезные ресурсы:
+    \begin{itemize}
+    \item \url{http://pytest.org}
+    \item \ldots
+    \end{itemize}
+    \footnotesize\emph{please don't sue me for copyright infringement}
+\end{frame}
+
+\end{document}
