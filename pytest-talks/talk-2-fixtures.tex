@@ -67,14 +67,14 @@
 
 \section{Понятие фикстуры}
 \begin{frame}[fragile]{Понятие фикстуры}
-    \begin{itemize}
-    \item In software testing, a test fixture is a fixed state of the software
-    under test used as a baseline for running tests; also known as the test context.
-    \pause \item В классических xUnit-фреймворках фикстуры реализуются через описание действий, относящихся к setUp и к tearDown.
-    Например в unittest необходимо переопределить методы setUp() и к tearDown() класса TestCase.
-    \pause \item pytest вводит понятие функции-фикстуры, которая передается в тестовую функицию/метод в виде funcarg-а (именнованного аргумента).
-    \pause \item Фикстуры в pytest реализуют паттерн \href{https://en.wikipedia.org/wiki/Dependency_injection}{Dependency Injection}.
-    \end{itemize}
+	\begin{itemize}
+	\item In software testing, a test fixture is a fixed state of the software
+	under test used as a baseline for running tests; also known as the test context.
+	\pause \item В классических xUnit-фреймворках фикстуры реализуются через описание действий, относящихся к setUp и к tearDown.
+	Например в unittest необходимо переопределить методы setUp() и к tearDown() класса TestCase.
+	\pause \item pytest вводит понятие функции-фикстуры, которая передается в тестовую функицию/метод в виде funcarg-а (именнованного аргумента).
+	\pause \item Фикстуры в pytest реализуют паттерн \href{https://en.wikipedia.org/wiki/Dependency_injection}{Dependency Injection}.
+	\end{itemize}
 \end{frame}
 
 \section{Фикстуры в pytest}
@@ -116,7 +116,7 @@
 
 \subsection{Использование маркеров в фикстурах}
 \begin{frame}[fragile]{Использование маркеров в фикстурах}
-	Используя доступ из фикстуры к маркерам зависимой функции, возможно реализовать настраиваимаю фикстуру:
+	Используя доступ из фикстуры к маркерам зависимой функции, возможно реализовать настраиваемую фикстуру:
 	\pyfile{./code/fixtures-markers.py}
 \end{frame}
 
@@ -134,6 +134,22 @@
 		Применять skip можно и на этапе параметризации:
 		\pyfile{./code/fixtures-skipping-params.py}
 	}
+\end{frame}
+
+\section{Демонстрация}
+\begin{frame}[fragile]{Демонстрация}
+	\begin{itemize}
+	\item Рассмотрим применение фикстур на примере несложных UI тестов.
+	\pause \item Сценарий для автоматизации:
+	\pause \item Открыть браузер на странице \url{http://sputnik.ru/search}.
+	\pause \item Ввести запрос в поле и нажать ENTER.
+	\pause \item Сделать необходимую проверку.
+	\pause \item Использовать будем:
+	\pause \item Pytest (что же еще?),
+		\href{http://selenium-python.readthedocs.io/}{Selenium Webdriver} (автоматизация браузера),
+		\href{https://github.com/ponty/pyvirtualdisplay}{Virtual Display} (виртуальный дисплей, без иксов),
+		\href{http://allure.qatools.ru/}{Allure Framework} (для отчетов).
+	\end{itemize}
 \end{frame}
 
 \section{Полезные ресурсы}
