@@ -1,0 +1,151 @@
+\documentclass{beamer}
+\usepackage[russian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{verbatim}
+\usepackage{minted}
+\usetheme{Pittsburgh}
+\usecolortheme{whale}
+\definecolor{links}{HTML}{2A1B81}
+\hypersetup{urlcolor=links}
+\hypersetup{colorlinks=true,urlcolor=links,linkcolor=links}
+
+\newmintedfile[pyfile]{python}{
+	fontfamily=tt,
+	fontsize=\footnotesize,
+	linenos=true,
+	breaklines=true,
+	numberblanklines=true,
+	numbersep=12pt,
+	numbersep=5pt,
+	gobble=0,
+	frame=leftline,
+	framerule=0.4pt,
+	framesep=2mm,
+	funcnamehighlighting=true,
+	tabsize=4,
+	obeytabs=false,
+	mathescape=false
+	samepage=false,
+	showspaces=false,
+	showtabs =false,
+	texcl=false,
+}
+\newminted[pycode]{python}{
+	fontfamily=tt,
+	fontsize=\small,
+	breaklines=true,
+	linenos=true,
+	autogobble=true,
+	frame=lines,
+	framerule=0.4pt,
+	funcnamehighlighting=true,
+	tabsize=2,
+}
+
+
+
+\title{pytest -- фикстуры}
+\author{Литус Ярослав / Yaroslav Litus}
+\institute{
+	Группа тестирования поиска / search testing group \newline
+	Поисковый Портал Спутник / \href{http://sputnik.ru}{sputnik.ru}
+}
+\date{}
+
+
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\begin{frame}{Contents}
+	\tableofcontents
+\end{frame}
+
+\section{Понятие фикстуры}
+\begin{frame}[fragile]{Понятие фикстуры}
+    \begin{itemize}
+    \item In software testing, a test fixture is a fixed state of the software
+    under test used as a baseline for running tests; also known as the test context.
+    \pause \item В классических xUnit-фреймворках фикстуры реализуются через описание действий, относящихся к setUp и к tearDown.
+    Например в unittest необходимо переопределить методы setUp() и к tearDown() класса TestCase.
+    \pause \item pytest вводит понятие функции-фикстуры, которая передается в тестовую функицию/метод в виде funcarg-а (именнованного аргумента).
+    \pause \item Фикстуры в pytest реализуют паттерн \href{https://en.wikipedia.org/wiki/Dependency_injection}{Dependency Injection}.
+    \end{itemize}
+\end{frame}
+
+\section{Фикстуры в pytest}
+\subsection{Основы}
+\begin{frame}[fragile]{Основы}
+	\pyfile{./code/fixtures-basics.py}
+\end{frame}
+
+\begin{frame}[fragile]{yield\_fixture}
+	\pyfile{./code/fixtures-basics-better.py}
+\end{frame}
+
+\subsection{Кэширование}
+\begin{frame}[fragile]{Кэширование}
+	У декораторов \verb|fixture| и \verb|yield_fixture| есть аргумент \textbf{scope}:
+	\pyfile{./code/fixtures-caching.py}
+\end{frame}
+
+\begin{frame}[fragile]{Кэширование}
+	\inputminted[frame=lines,fontsize=\footnotesize]{bash}{./code/fixtures-caching-out.txt}
+	Доступные значения \verb|scope|: \verb|function, class, module, session|
+\end{frame}
+
+\subsection{Зависимости между фикстурами}
+\begin{frame}[fragile]{Зависимости между фикстурами}
+	Фикстуры могут использовать другие фикстуры:
+	\pyfile{./code/fixtures-nested.py}
+\end{frame}
+
+\subsection{skip/fail в фикстурах}
+\begin{frame}[fragile]{skip/fail в фикстурах}
+	Вызов \verb|pytest.skip()| или \verb|pytest.fail()| внутри тестовой функции явно пропускает или фэйлит тест.
+
+	То же самое возможно использовать в фикстурах:
+	\pyfile{./code/fixtures-skip-fail.py}
+
+	Таким образом все тесты, зависящие от такой фикстуры будут пропущены (skip) или сломаны (fail).
+\end{frame}
+
+\subsection{Использование маркеров в фикстурах}
+\begin{frame}[fragile]{Использование маркеров в фикстурах}
+	Используя доступ из фикстуры к маркерам зависимой функции, возможно реализовать настраиваимаю фикстуру:
+	\pyfile{./code/fixtures-markers.py}
+\end{frame}
+
+\subsection{Autouse-фикстуры}
+\begin{frame}[fragile]{Autouse-фикстуры}
+	\pyfile{./code/fixtures-autouse.py}
+\end{frame}
+
+\begin{frame}[fragile]{Параметризация фикстур}
+	\only<1>{
+		Фикстуры можно параметризовать. Параметризованные фикстуры можно комбинировать.
+		\pyfile{./code/fixtures-parametrize.py}
+	}
+	\only<2>{
+		Применять skip можно и на этапе параметризации:
+		\pyfile{./code/fixtures-skipping-params.py}
+	}
+\end{frame}
+
+\section{Полезные ресурсы}
+\begin{frame}[fragile]{Полезные ресурсы}
+	\begin{itemize}
+	\item ``Advanced py.test fixtures'':
+		\url{https://youtu.be/IBC_dxr-4ps} and
+		\href{http://devork.be/talks/advanced-fixtures/advfix.html}{slides}
+	\item ``Improve your testing with Pytest and Mock'':
+		\url{https://youtu.be/RcN26hznmk4}
+	\end{itemize}
+	% \footnotesize\emph{please don't sue me for copyright infringement}
+\end{frame}
+
+\end{document}
