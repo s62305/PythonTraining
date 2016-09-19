@@ -46,7 +46,7 @@
 
 
 
-\title{pytest -- фикстуры}
+\title{pytest фикстуры / pytest fixtures}
 \author{Литус Ярослав / Yaroslav Litus}
 \institute{
 	Группа тестирования поиска / search testing group \newline
@@ -70,9 +70,9 @@
 	\begin{itemize}
 	\item In software testing, a test fixture is a fixed state of the software
 	under test used as a baseline for running tests; also known as the test context.
-	\pause \item В классических xUnit-фреймворках фикстуры реализуются через описание действий, относящихся к setUp и к tearDown.
+	\pause \item В классических xUnit-фреймворках фикстуры реализуются через описание действий, относящихся к Setup и к Teardown.
 	Например в unittest необходимо переопределить методы setUp() и к tearDown() класса TestCase.
-	\pause \item pytest вводит понятие функции-фикстуры, которая передается в тестовую функицию/метод в виде funcarg-а (именнованного аргумента).
+	\pause \item pytest вводит понятие функции-фикстуры, которая передается в тестовую функцию/метод в виде funcarg-а (позиционного аргумента).
 	\pause \item Фикстуры в pytest реализуют паттерн \href{https://en.wikipedia.org/wiki/Dependency_injection}{Dependency Injection}.
 	\end{itemize}
 \end{frame}
@@ -136,14 +136,30 @@
 	}
 \end{frame}
 
+\section{Всё вместе}
+\begin{frame}[fragile]{Всё вместе}
+	\begin{itemize}
+		\item Фикстуры в pytest~--- функции.
+		\pause \item Могут быть определены: на уровне класса, на уровне модуля и в conftest.
+		\pause \item Teardown: \verb|request.addfinalizer| или используя декоратор \verb|yield_fixture|.
+		\pause \item Кэширование. Используя параметр \verb|scope| (function, class, module, session).
+		\pause \item Модульность. Фикстуры используют фикстуры (внимательно с кешированием!).
+		\pause \item Могут вызвать skip или fail всех зависимых тестов.
+		\pause \item Полная интроспекция контекста в котором вызывается фикстура (функция, класс, модуль) через \verb|request|.
+			К примеру, возможно получить список маркеров.
+		\pause \item Глобальные фикстуры (autouse).
+		\pause \item Параметризация.
+	\end{itemize}
+\end{frame}
+
 \section{Демонстрация}
 \begin{frame}[fragile]{Демонстрация}
 	\begin{itemize}
 	\item Рассмотрим применение фикстур на примере несложных UI тестов.
 	\pause \item Сценарий для автоматизации:
-	\pause \item Открыть браузер на странице \url{http://sputnik.ru/search}.
-	\pause \item Ввести запрос в поле и нажать ENTER.
-	\pause \item Сделать необходимую проверку.
+	\pause \item -- Открыть браузер на странице \url{http://sputnik.ru/search}.
+	\pause \item -- Ввести запрос в поле и нажать ENTER.
+	\pause \item -- Сделать необходимую проверку.
 	\pause \item Использовать будем:
 	\pause \item Pytest (что же еще?),
 		\href{http://selenium-python.readthedocs.io/}{Selenium Webdriver} (автоматизация браузера),
@@ -151,6 +167,8 @@
 		\href{http://allure.qatools.ru/}{Allure Framework} (для отчетов).
 	\end{itemize}
 \end{frame}
+
+
 
 \section{Полезные ресурсы}
 \begin{frame}[fragile]{Полезные ресурсы}
